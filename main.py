@@ -4,6 +4,11 @@ import os
 mylist = ["black", "white"]
 
 choice = random.choice(mylist)
+piece = ""
+from_pos = "" 
+to_pos = ""
+
+# global piece, from_pos, to_pos
 
 def main():
     for i in range(100):
@@ -11,17 +16,19 @@ def main():
         print("Hello from chess-in-cli!\n")
         grid(piece="", from_pos="", to_pos="")
       piece, from_pos, to_pos = userInput()
-      # print(f"✅ Move to make in the board: {piece} from {from_pos} to {to_pos}")
       grid(piece, from_pos, to_pos)
 
 # Next step:
-# - [ ] Need to keep the game running
+# - [x] Need to keep the game running
 # - [x] Make the piece move according to the inputs received from the user
 # - [ ] The board should be displayed according to who's move it is (black / white)
-# - [ ] Make the grid change in place. And not have to draw the grid again.
+# - [x] Make the grid change in place. And not have to draw the grid again.
 
 def userInput(): 
+  global piece, from_pos, to_pos
   print("\n")
+  if piece and from_pos and to_pos:
+    print(f"✅ Your previous move: {piece} from {from_pos} to {to_pos}")
   print("Format: piece-from-to")
   move = input("Your move: ").strip()
 
@@ -103,22 +110,17 @@ def print_board(board_dict):
       for f in files:
          cell = f + r
          row.append(normalize(board_dict[cell]))
-         # row.append((board_dict[cell]))
       content_line = f"{r} " + " ".join(row)
       spacer_line = "  " + " ".join([" " * 5] * 8) 
       board_lines.append(content_line)
       board_lines.append(spacer_line)
-      # board_lines.append(line)
-      # board_lines.append("")
     
-  # footer = "   " + "   ".join(files)
   footer = "   " + "".join(f.center(6) for f in files)
   board_lines.append(footer)
 
   for line in board_lines:
      padding = (term_width - len(line)) // 2
      print(" " * max(padding, 0) + line)
-
 
 
 if __name__ == "__main__":
