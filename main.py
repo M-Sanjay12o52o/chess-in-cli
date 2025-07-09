@@ -51,28 +51,6 @@ def main():
   else:
      print("Computer mode not implemented yet.")
 
-
-# Next step:
-
-# - [x] get the type of game from user (vs computer or vs human)
-# - [x] Need to keep the game running
-# - [x] Make the piece move according to the inputs received from the user
-# - [x] Make the grid change in place. And not have to draw the grid again.
-# - [ ] The board should be displayed according to who's move it is (black / white)
-  # currently we are displayiing the board based on the random choice
-  # ? Does this board view persists over all the loops
-  # A: Yes it does
-  # ? We need to decide who's move it is
-  # Because white is what always makes the first move
-  # All we need to do is to set the white to the user/computer (human vs computer)
-  # And in human vs human we need to set it to any of the human
-  # ? We need to pass the move control from one player to another (in both cases)
-
-# fixes
-
-# - [ ] Even wrongs moves are also showing as successful but are not affecting the board 
-
-
 def userInput(): 
   global piece, from_pos, to_pos
   print("\n")
