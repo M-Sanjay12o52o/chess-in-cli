@@ -13,26 +13,65 @@ def get_computer_move():
     return result.move.uci() 
 
 mylist = ["black", "white"]
-computer_move = get_computer_move()
 
-choice = random.choice(mylist)
+# choice = random.choice(mylist)
 piece = ""
 from_pos = "" 
 to_pos = ""
 
+def get_game_type():
+   print("Press 0 for Computer")
+   print("Press 1 for Human")
+   game_type = input("Select Game Type: ")
+   return game_type
+
+# - [ ] take this from the user
+# get_game_type_result = get_game_type()
+get_game_type_result = "1"
+
+if get_game_type_result == "0":
+   game_type = "computer"
+elif get_game_type_result == "1":
+   game_type = "human"
+else:
+   game_type = "unknown"
+
+
 def main():
-    for i in range(100):
-      if i == 0:
-        print("Hello from chess-in-cli!\n")
-        grid(piece="", from_pos="", to_pos="")
+  if game_type == "human":
+     print("It's human vs human")
+     turn = "white"
+     
+     grid("", "", "", turn)
+
+     for _ in range(100):
       piece, from_pos, to_pos = userInput()
-      grid(piece, from_pos, to_pos)
+      grid(piece, from_pos, to_pos, turn)
+      turn = "black" if turn == "white" else "white"
+  else:
+     print("Computer mode not implemented yet.")
+
 
 # Next step:
+
+# - [x] get the type of game from user (vs computer or vs human)
 # - [x] Need to keep the game running
 # - [x] Make the piece move according to the inputs received from the user
-# - [ ] The board should be displayed according to who's move it is (black / white)
 # - [x] Make the grid change in place. And not have to draw the grid again.
+# - [ ] The board should be displayed according to who's move it is (black / white)
+  # currently we are displayiing the board based on the random choice
+  # ? Does this board view persists over all the loops
+  # A: Yes it does
+  # ? We need to decide who's move it is
+  # Because white is what always makes the first move
+  # All we need to do is to set the white to the user/computer (human vs computer)
+  # And in human vs human we need to set it to any of the human
+  # ? We need to pass the move control from one player to another (in both cases)
+
+# fixes
+
+# - [ ] Even wrongs moves are also showing as successful but are not affecting the board 
+
 
 def userInput(): 
   global piece, from_pos, to_pos
@@ -49,8 +88,8 @@ def userInput():
   piece, from_pos, to_pos = move.split("-")
   return piece, from_pos, to_pos
 
-def grid(piece, from_pos, to_pos):
-  board = white_board_dict if choice == "white" else black_board_dict
+def grid(piece, from_pos, to_pos, turn):
+  board = white_board_dict
 
   if piece and from_pos and to_pos:
       if board[from_pos] != piece:
@@ -59,8 +98,8 @@ def grid(piece, from_pos, to_pos):
         board[to_pos] = piece
         board[from_pos] = "---"
 
-  print(f"choice: {choice}\n")
-  print_board(board)
+  flip = (turn == "black") 
+  print_board(board, flip)
 
 
    
@@ -109,19 +148,22 @@ for row in range(8):
 def normalize(cell, width=5):
    return cell.center(width)
 
-def print_board(board_dict):
+def print_board(board_dict, flip):
   os.system('clear')
-  print(f"{choice}'s move")
-  print("computer_move: ", computer_move)
   term_width = os.get_terminal_size().columns
   board_lines = []
 
-  for r in ranks:
+  row_ranks = ranks[::-1] if not flip else ranks[:]
+  col_files = files[:] if not flip else files[::-1]
+
+  for r in row_ranks:
       row = []
-      for f in files:
+      for f in col_files:
          cell = f + r
          row.append(normalize(board_dict[cell]))
-      content_line = f"{r} " + " ".join(row)
+      # content_line = f"{r} " + " ".join(row)
+      display_rank = r if not flip else str(9 - int(r))
+      content_line = f"{display_rank} " + " ".join(row)
       spacer_line = "  " + " ".join([" " * 5] * 8) 
       board_lines.append(content_line)
       board_lines.append(spacer_line)
@@ -135,10 +177,5 @@ def print_board(board_dict):
 
 
 if __name__ == "__main__":
-  print("Hello from chess-in-cli!\n")
-  grid("", "", "")
-  for _ in range(100):
-    piece, from_pos, to_pos = userInput()
-    grid(piece, from_pos, to_pos)
-
+   main()  
 
