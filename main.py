@@ -1,14 +1,24 @@
 import random
 import os
+import chess
+import chess.engine
+
+engine_path = "/opt/homebrew/bin/stockfish"  
+engine = chess.engine.SimpleEngine.popen_uci(engine_path)
+board = chess.Board()
+
+def get_computer_move():
+    result = engine.play(board, chess.engine.Limit(time=0.1))
+    board.push(result.move)
+    return result.move.uci() 
 
 mylist = ["black", "white"]
+computer_move = get_computer_move()
 
 choice = random.choice(mylist)
 piece = ""
 from_pos = "" 
 to_pos = ""
-
-# global piece, from_pos, to_pos
 
 def main():
     for i in range(100):
@@ -37,7 +47,6 @@ def userInput():
       return None
   
   piece, from_pos, to_pos = move.split("-")
-  # print(f"✅ Parsed move: {piece} from {from_pos} to {to_pos}")
   return piece, from_pos, to_pos
 
 def grid(piece, from_pos, to_pos):
@@ -102,6 +111,8 @@ def normalize(cell, width=5):
 
 def print_board(board_dict):
   os.system('clear')
+  print(f"{choice}'s move")
+  print("computer_move: ", computer_move)
   term_width = os.get_terminal_size().columns
   board_lines = []
 
