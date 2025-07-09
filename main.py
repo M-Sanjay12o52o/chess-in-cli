@@ -57,7 +57,7 @@ def grid(piece, from_pos, to_pos):
         print(f"❌ {piece} not found at {from_pos}")
       else:
         board[to_pos] = piece
-        board[from_pos] = "-*-"
+        board[from_pos] = "---"
 
   print(f"choice: {choice}\n")
   print_board(board)
