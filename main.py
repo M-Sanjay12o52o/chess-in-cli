@@ -1,14 +1,24 @@
 import random
+import os
+
+mylist = ["black", "white"]
+
+choice = random.choice(mylist)
 
 def main():
-    print("Hello from chess-in-cli!\n")
-    grid(piece="", from_pos="", to_pos="")
-    piece, from_pos, to_pos = userInput()
-    # print(f"✅ Move to make in the board: {piece} from {from_pos} to {to_pos}")
-    grid(piece, from_pos, to_pos)
+    for i in range(100):
+      if i == 0:
+        print("Hello from chess-in-cli!\n")
+        grid(piece="", from_pos="", to_pos="")
+      piece, from_pos, to_pos = userInput()
+      # print(f"✅ Move to make in the board: {piece} from {from_pos} to {to_pos}")
+      grid(piece, from_pos, to_pos)
 
 # Next step:
-# - [ ] Make the piece move according to the inputs received from the user
+# - [ ] Need to keep the game running
+# - [x] Make the piece move according to the inputs received from the user
+# - [ ] The board should be displayed according to who's move it is (black / white)
+# - [ ] Make the grid change in place. And not have to draw the grid again.
 
 def userInput(): 
   print("\n")
@@ -38,10 +48,6 @@ def grid(piece, from_pos, to_pos):
 
 
    
-mylist = ["black", "white"]
-
-choice = random.choice(mylist)
-
 files = ["a", "b", "c", "d", "e", "f", "g", "h"]
 ranks = ["8", "7", "6", "5", "4", "3", "2", "1"]
 
@@ -49,25 +55,33 @@ white_board_dict = {}
 black_board_dict = {}
 
 white_setup = [
-    ["bRl", "bNl", "bBl", "bK ", "bQ ", "bBr", "bNr", "bRr"],  # 8
+    ["bRl", "bNl", "bBl", "bK", "bQ", "bBr", "bNr", "bRr"],  # 8
     ["bp1", "bp2", "bp3", "bp4", "bp5", "bp6", "bp7", "bp8"],  # 7
-    ["-*-"] * 8,  # 6
-    ["-*-"] * 8,  # 5
-    ["-*-"] * 8,  # 4
-    ["-*-"] * 8,  # 3
+    # ["⬜"] * 8, # 6
+    # ["⬜"] * 8, # 5
+    # ["⬜"] * 8, # 4
+    # ["⬜"] * 8, # 3
+    ["---"] * 8,
+    ["---"] * 8,
+    ["---"] * 8,
+    ["---"] * 8,
     ["wp1", "wp2", "wp3", "wp4", "wp5", "wp6", "wp7", "wp8"],  # 2
     ["wRl", "wNl", "wBl", "wK ",  "wQ ",  "wBr", "wNr", "wRr"]   # 1
 ]
 
 black_setup = [
-    ["wRl", "wNl", "wBl", "wK ",  "wQ ",  "wBr", "wNr", "wRr"],  # 8
+    ["wRl", "wNl", "wBl", "wK",  "wQ",  "wBr", "wNr", "wRr"],  # 8
     ["wp1", "wp2", "wp3", "wp4", "wp5", "wp6", "wp7", "wp8"],  # 7
-    ["-*-"] * 8,  # 6
-    ["-*-"] * 8,  # 5
-    ["-*-"] * 8,  # 4
-    ["-*-"] * 8,  # 3
+    # ["⬜"] * 8, # 6
+    # ["⬜"] * 8, # 5
+    # ["⬜"] * 8, # 4
+    # ["⬜"] * 8, # 3
+    ["---"] * 8,
+    ["---"] * 8,
+    ["---"] * 8,
+    ["---"] * 8,
     ["bp1", "bp2", "bp3", "bp4", "bp5", "bp6", "bp7", "bp8"],  # 2
-    ["bRl", "bNl", "bBl", "bK ",  "bQ ",  "bBr", "bNr", "bRr"]   # 1
+    ["bRl", "bNl", "bBl", "bK",  "bQ",  "bBr", "bNr", "bRr"]   # 1
 ]
 
 for row in range(8):
@@ -76,18 +90,42 @@ for row in range(8):
       white_board_dict[pos] = white_setup[row][col]
       black_board_dict[pos] = black_setup[row][col]
 
+def normalize(cell, width=5):
+   return cell.center(width)
+
 def print_board(board_dict):
+  os.system('clear')
+  term_width = os.get_terminal_size().columns
+  board_lines = []
+
   for r in ranks:
       row = []
       for f in files:
          cell = f + r
-         row.append(board_dict[cell])
-      print(f"{r} " + " ".join(row))
-  print("  " + "  ".join(files))
+         row.append(normalize(board_dict[cell]))
+         # row.append((board_dict[cell]))
+      content_line = f"{r} " + " ".join(row)
+      spacer_line = "  " + " ".join([" " * 5] * 8) 
+      board_lines.append(content_line)
+      board_lines.append(spacer_line)
+      # board_lines.append(line)
+      # board_lines.append("")
+    
+  # footer = "   " + "   ".join(files)
+  footer = "   " + "".join(f.center(6) for f in files)
+  board_lines.append(footer)
+
+  for line in board_lines:
+     padding = (term_width - len(line)) // 2
+     print(" " * max(padding, 0) + line)
 
 
 
 if __name__ == "__main__":
-   # - [ ] Need to keep the game running
-   while True:
-    main()
+  print("Hello from chess-in-cli!\n")
+  grid("", "", "")
+  for _ in range(100):
+    piece, from_pos, to_pos = userInput()
+    grid(piece, from_pos, to_pos)
+
+
