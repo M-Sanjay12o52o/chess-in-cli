@@ -1,9 +1,23 @@
+import shutil
+from utils import get_piece_symbol
+
+# features
+# - [ ] have it centered in view in the terminal
+# - [ ] i am trying to increase the size of the board 
+
+# fixes
+# - [ ] reverse the pawns (it should be white in place of black and black in place of white)
+
+def center_line(line):
+    width = shutil.get_terminal_size().columns
+    return line.center(width)
+
 def create_board():
     board = {}
 
     # Files and ranks
     files = "abcdefgh"
-    ranks = "12345678"
+    # ranks = "12345678"
 
     # Set up white pieces
     white_pieces = ["wRl", "wNl", "wBl", "wQ ", "wK ", "wBr", "wNr", "wRr"]
@@ -35,9 +49,12 @@ def print_board(board, flip=False):
         ranks = ranks[::-1]
 
     for rank in ranks:
-        row = [board[file + rank] for file in files]
-        print(f"{rank} {' '.join(row)}")
-    print("  " + "   ".join(files if not flip else files[::-1]))
+        row = [get_piece_symbol(board[file + rank]) for file in files]
+        spaced_row = "   ".join(row)
+        line = f"{rank}   {spaced_row}"
+        print(center_line(line))
+    file_labels = "   ".join(files if not flip else files[::-1])
+    print(center_line("    " + file_labels))
 
 
 if __name__ == "__main__":
