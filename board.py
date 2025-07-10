@@ -37,7 +37,7 @@ def print_board(board, flip=False):
     for rank in ranks:
         row = [board[file + rank] for file in files]
         print(f"{rank} {' '.join(row)}")
-    print("  " + "   ".join(files.upper() if not flip else files[::-1].upper()))
+    print("  " + "   ".join(files if not flip else files[::-1]))
 
 
 if __name__ == "__main__":
