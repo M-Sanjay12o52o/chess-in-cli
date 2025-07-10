@@ -17,9 +17,10 @@ def validate_user_input(board):
       print("❌ Invalid input format. Try again.")
 
 # - [ ] verify when in check a message is shown
-# - [ ] add icons for pieces
+# - [x] add icons for pieces
   # - [ ] center it on the screen and increase the size of the board and the icons
 # - [ ] make castling work on the custom board
+  # - [ ] verify whether castling works fine in the stockfish engine board
 
 def play_game():
   custom_board = create_board()
@@ -31,8 +32,8 @@ def play_game():
     print("\n--- Custom Board ---")
     print_board(custom_board, flip=False)
 
-    # print("\n--- python-chess Board ---")
-    # print(engine_board)
+    print("\n--- python-chess Board ---")
+    print(engine_board)
     if move == "white":
       user_input = validate_user_input(engine_board)
       engine_board.push_uci(user_input)
@@ -59,13 +60,9 @@ def play_game():
       if engine_board.is_check():
         print(f"⚠️ {move.capitalize()} is in check!")
 
-
-    
     move = "black" if move == "white" else "white"
 
   
   print("Game Over: ", engine_board.result())
   close_engine()
 
-if __name__ == "__main__":
-  play_game()
