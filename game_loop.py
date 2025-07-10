@@ -16,11 +16,6 @@ def validate_user_input(board):
     except:
       print("❌ Invalid input format. Try again.")
 
-# - [ ] verify when in check a message is shown
-# - [x] add icons for pieces
-  # - [ ] center it on the screen and increase the size of the board and the icons
-# - [ ] make castling work on the custom board
-  # - [ ] verify whether castling works fine in the stockfish engine board
 
 def play_game():
   custom_board = create_board()
@@ -65,4 +60,3 @@ def play_game():
   
   print("Game Over: ", engine_board.result())
   close_engine()
-
