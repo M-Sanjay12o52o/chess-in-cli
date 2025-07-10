@@ -20,9 +20,7 @@ if __name__ == "__main__":
     from_cell, to_cell = user_input[:2], user_input[2:] 
     print("from_cell: ", from_cell, "to_cell: ", to_cell)
 
-    # - [ ] change the board according to the user move
-    # change algebraic notation to indices
-    # move the piece
+    # update the board with user move
     board[to_cell] = board[from_cell]
     board[from_cell] = "---"
 
@@ -30,9 +28,4 @@ if __name__ == "__main__":
 
   
 
-  # - [ ] after getting the user move, change the board accroding to the move
-  # - [ ] move the control to the other play (black - player)
-  # - [ ] get the move from the black player and implement that move on the booard
-  # - [ ] and pass the control to the white
-  # - [ ] do this back and forth
 
