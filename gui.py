@@ -26,7 +26,15 @@ class ChessGUI:
         board_frame.grid(row=0, column=0, padx=10, pady=10)
         files = "abcdefgh"
         ranks = "87654321"
+        # File labels (top only)
+        for f, file in enumerate(files):
+            lbl = tk.Label(board_frame, text=file, font=("Arial", 12, "bold"))
+            lbl.grid(row=0, column=f+1)
+        # Rank labels (left only) and board squares
         for r, rank in enumerate(ranks):
+            # Rank label (left only)
+            lbl = tk.Label(board_frame, text=rank, font=("Arial", 12, "bold"))
+            lbl.grid(row=r+1, column=0)
             for f, file in enumerate(files):
                 square = file + rank
                 btn = tk.Button(
@@ -34,7 +42,7 @@ class ChessGUI:
                     font=("Arial", 24),
                     command=lambda sq=square: self.on_square_click(sq)
                 )
-                btn.grid(row=r, column=f)
+                btn.grid(row=r+1, column=f+1)
                 self.buttons[square] = btn
         # Move history
         self.history_text = tk.Text(self.root, width=30, height=20, state='disabled')
@@ -42,6 +50,16 @@ class ChessGUI:
         # Status
         status_label = tk.Label(self.root, textvariable=self.status_var, font=("Arial", 14))
         status_label.grid(row=1, column=0, columnspan=2, pady=5)
+        # Move entry
+        entry_frame = tk.Frame(self.root)
+        entry_frame.grid(row=2, column=0, columnspan=2, pady=10)
+        entry_label = tk.Label(entry_frame, text="Enter your move (e.g., e2e4):", font=("Arial", 12))
+        entry_label.pack(side=tk.LEFT)
+        self.move_entry = tk.Entry(entry_frame, font=("Arial", 12), width=10)
+        self.move_entry.pack(side=tk.LEFT, padx=5)
+        self.move_entry.bind('<Return>', self.on_move_entry)
+        submit_btn = tk.Button(entry_frame, text="Submit", font=("Arial", 12), command=self.on_move_entry)
+        submit_btn.pack(side=tk.LEFT)
 
     def update_board(self):
         files = "abcdefgh"
@@ -68,6 +86,11 @@ class ChessGUI:
                     btn.config(state=tk.DISABLED)
                 else:
                     btn.config(state=tk.NORMAL)
+        # Enable/disable move entry
+        if self.user_turn and not self.engine_board.is_game_over():
+            self.move_entry.config(state=tk.NORMAL)
+        else:
+            self.move_entry.config(state=tk.DISABLED)
 
     def update_status(self, msg=None):
         if msg:
@@ -81,29 +104,39 @@ class ChessGUI:
             turn = "White" if self.engine_board.turn else "Black"
             self.status_var.set(f"{turn}'s move")
 
-    def on_square_click(self, square):
-        if not self.user_turn or self.engine_board.is_game_over():
-            self.update_status()
+    def on_move_entry(self, event=None):
+        self.clear_and_focus_entry()
+        move = self.move_entry.get().strip()
+        if len(move) < 4:
+            self.update_status("Invalid move format. Use e.g. e2e4.")
+            self.clear_and_focus_entry()
             return
-        if self.selected_square is None:
-            # Select a piece
-            piece = self.custom_board.get(square, "---")
-            if piece.startswith("w") and self.engine_board.turn:
-                self.selected_square = square
-                self.update_board()
-                self.update_status("Select a destination square.")
-            else:
-                self.update_status("Select a white piece to move.")
-        elif self.selected_square == square:
-            # Deselect if clicking the same square
-            self.selected_square = None
-            self.update_board()
-            self.update_status("Selection cleared.")
-        else:
-            # Try to make a move
-            from_sq = self.selected_square
-            to_sq = square
+        if not self.user_turn or self.engine_board.is_game_over():
+            self.update_status("It's not your turn or the game is over.")
+            self.clear_and_focus_entry()
+            return
+        from_sq, to_sq = move[:2], move[2:4]
+        move_uci = from_sq + to_sq
+        try:
+            move_obj = chess.Move.from_uci(move_uci)
+        except Exception:
+            self.update_status("Invalid move format. Use e.g. e2e4.")
+            self.clear_and_focus_entry()
+            return
+        if move_obj in self.engine_board.legal_moves:
             self.try_user_move(from_sq, to_sq)
+            self.clear_and_focus_entry()
+        else:
+            self.update_status("Illegal move in this position.")
+            self.clear_and_focus_entry()
+
+    def clear_and_focus_entry(self):
+        self.move_entry.delete(0, tk.END)
+        self.move_entry.focus_set()
+
+    def on_square_click(self, square):
+        # Optionally keep this for learning by clicking, or remove to force only entry
+        pass
 
     def try_user_move(self, from_sq, to_sq):
         move_uci = from_sq + to_sq
@@ -149,6 +182,7 @@ class ChessGUI:
         self.user_turn = True
         self.update_board()
         self.update_status()
+        self.clear_and_focus_entry()
         if self.engine_board.is_game_over():
             self.update_status()
             close_engine()
