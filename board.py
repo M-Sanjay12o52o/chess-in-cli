@@ -1,6 +1,9 @@
 import shutil
 from utils import get_piece_symbol
 
+# In Progress
+# - [ ] Make the board bigger 
+
 def center_line(line):
     width = shutil.get_terminal_size().columns
     return line.center(width)
@@ -38,11 +41,11 @@ def print_board(board, flip=False):
 
     for rank in ranks:
         row = [get_piece_symbol(board[file + rank]) for file in files]
-        spaced_row = "   ".join(row)
-        line = f"{rank}   {spaced_row}"
+        spaced_row = "  ".join(row)
+        line = f"{rank}  {spaced_row}"
         print(center_line(line))
-    file_labels = "   ".join(files if not flip else files[::-1])
-    print(center_line("    " + file_labels))
+    file_labels = "  ".join(files if not flip else files[::-1])
+    print(center_line("   " + file_labels))
 
 
 if __name__ == "__main__":

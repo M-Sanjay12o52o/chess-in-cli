@@ -6,11 +6,23 @@ from engine_interface import get_computer_move, close_engine
 
 def validate_user_input(board):
   while True:
+    # - [ ] Display the last move that was made and who made it as text always
     user_input = input("Your move (e.g., e2e4): ")
     try:
       move_obj = chess.Move.from_uci(user_input)
       is_castling = board.is_castling(move_obj)# this returns true for both right&left castle
+      if is_castling:
+        to_square = move_obj.to_square
+        to_square_name = chess.square_name(to_square)
+
+        if to_square_name in ("g1", "g8"):
+            print("🏰 Kingside castling")
+        elif to_square_name in ("c1", "c8"):
+            print("🏰 Queenside castling")
+        else:
+            print("⚠️ Unexpected castling move")
       print("is_castling: ", is_castling)
+      # based on this variable `is_castling` 
       if move_obj in board.legal_moves:
         return user_input
       else:
@@ -26,8 +38,18 @@ def play_game():
 
   while not engine_board.is_game_over():
     os.system("clear") # clears the temrminal
-    board_msg = center_line("--- Custom Board ---")
+    board_msg = center_line("--- Chess Board ---")
     # print("\n--- Custom Board ---")
+    if engine_board.move_stack:
+      last_move = engine_board.peek()
+      if engine_board.is_castling(last_move):
+        print("Last move was a castle")
+      if (engine_board.is_check()):
+        print("Last move:", engine_board.peek().uci(), "CHECK")
+      else:
+        print("Last move:", engine_board.peek().uci())
+    else:
+      print("No moves made yet.")
     print(board_msg)
     print_board(custom_board, flip=False)
 
