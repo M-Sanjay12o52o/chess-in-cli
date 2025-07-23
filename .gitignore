@@ -8,7 +8,8 @@ wheels/
 
 # Virtual environments
 .venv
+venv/
 
 .env
-notes.txt
+notes.md
 explainer.excalidraw

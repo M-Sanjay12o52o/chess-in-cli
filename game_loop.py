@@ -1,7 +1,7 @@
 import os
 import time
 import chess
-from board import create_board, print_board
+from board import create_board, print_board, center_line
 from engine_interface import get_computer_move, close_engine
 
 def validate_user_input(board):
@@ -9,6 +9,8 @@ def validate_user_input(board):
     user_input = input("Your move (e.g., e2e4): ")
     try:
       move_obj = chess.Move.from_uci(user_input)
+      is_castling = board.is_castling(move_obj)# this returns true for both right&left castle
+      print("is_castling: ", is_castling)
       if move_obj in board.legal_moves:
         return user_input
       else:
@@ -24,13 +26,17 @@ def play_game():
 
   while not engine_board.is_game_over():
     os.system("clear") # clears the temrminal
-    print("\n--- Custom Board ---")
+    board_msg = center_line("--- Custom Board ---")
+    # print("\n--- Custom Board ---")
+    print(board_msg)
     print_board(custom_board, flip=False)
 
-    print("\n--- python-chess Board ---")
-    print(engine_board)
+    # print("\n--- python-chess Board ---")
+    # print(engine_board)
     if move == "white":
       user_input = validate_user_input(engine_board)
+      # this is where we need to add logic to have the castle move be reflected on our
+      # custom board as well
       engine_board.push_uci(user_input)
 
       from_cell, to_cell = user_input[:2], user_input[2:]
